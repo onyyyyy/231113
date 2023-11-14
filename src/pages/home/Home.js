@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { nowPlayingList } from "../../api";
 
@@ -42,25 +42,40 @@ const BlackBg = styled.div`
 `;
 
 export const Home = () => {
+  const [nowPlayingData, setNowPlayingData] = useState();
+  const [isLoading, setLoading] = useState(true);
+
   useEffect(() => {
     (async () => {
       try {
         const { results } = await nowPlayingList();
-        console.log(results[0].title);
-      } catch (error) {}
+        // console.log(results);
+        setNowPlayingData(results);
+        setLoading(false);
+      } catch (error) {
+        console.log("에러 : " + error);
+      }
     })();
   }, []);
 
+  console.log(isLoading);
+  console.log(nowPlayingData);
+
   return (
-    <MainBanner>
-      <BlackBg />
-      <h3>Title</h3>
-      <p>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quia suscipit
-        distinctio temporibus perferendis similique, quos et labore obcaecati
-        nihil quibusdam, at, doloribus quaerat sed consequuntur magnam magni
-        veniam saepe earum?
-      </p>
-    </MainBanner>
+    <>
+      {isLoading ? (
+        "loading"
+      ) : (
+        <>
+          {nowPlayingData && (
+            <MainBanner>
+              <BlackBg />
+              <h3>{nowPlayingData[0].title}</h3>
+              <p>{nowPlayingData[0].overview}</p>
+            </MainBanner>
+          )}
+        </>
+      )}
+    </>
   );
 };
